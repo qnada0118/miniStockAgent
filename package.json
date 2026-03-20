@@ -1,0 +1,12 @@
+{
+    "name": "eb-node-sample",
+    "version": "1.0.0",
+    "description": "Sample Node.js app for Elastic Beanstalk", 
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "express" : "^4.19.2"
+    }
+}
