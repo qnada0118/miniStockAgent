@@ -3,6 +3,7 @@ import streamlit as st
 import uuid
 import re
 import html
+from datetime import datetime
 
 from stock_agent import create_stock_agent
 from genfinance.env import load_app_env
@@ -12,6 +13,37 @@ from ui.chat_style import apply_styles
 st.set_page_config(page_title="Chat Demo", page_icon="💬")
 load_app_env()
 apply_styles()
+
+
+def log_to_terminal(label: str, content: str) -> None:
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"\n[{timestamp}] {label}")
+    print("-" * 60)
+    print(content)
+    print("-" * 60, flush=True)
+
+
+def summarize_reasoning_path(user_input: str) -> str:
+    return "\n".join(
+        [
+            "내부 사고 원문은 표시하지 않고, 확인 가능한 처리 기준만 요약합니다.",
+            f"1. 사용자 질문 확인: {user_input}",
+            "2. 투자 관련 질문이면 Knowledge Base 검색을 우선 사용합니다.",
+            "3. 최신 뉴스/정량 데이터가 필요하면 Tavily 또는 FMP 도구 결과를 보조 근거로 사용합니다.",
+            "4. 최종 답변은 출처, 긍정 요인, 리스크, 투자 유의사항을 중심으로 정리합니다.",
+        ]
+    )
+
+
+def clean_agent_reply(raw_reply: str) -> str:
+    cleaned_reply = re.sub(
+        r"<thinking>.*?</thinking>",
+        "",
+        raw_reply,
+        flags=re.DOTALL,
+    ).strip()
+
+    return cleaned_reply if cleaned_reply else raw_reply
 
 
 def render_user_message(content: str) -> None:
@@ -121,6 +153,9 @@ if not st.session_state["awaiting_response"]:
     user_input = st.chat_input("질문을 입력하세요")
 
     if user_input:
+        log_to_terminal("사용자 입력", user_input)
+        log_to_terminal("처리 기준 요약", summarize_reasoning_path(user_input))
+
         current_chat["messages"].append(
             {"role": "user", "content": user_input}
         )
@@ -148,18 +183,12 @@ else:
                         else:
                             raw_reply = str(result)
 
-                        # <thinking> 제거
-                        cleaned_reply = re.sub(
-                            r"<thinking>.*?</thinking>",
-                            "",
-                            raw_reply,
-                            flags=re.DOTALL
-                        ).strip()
-
-                        bot_reply = cleaned_reply if cleaned_reply else raw_reply
+                        bot_reply = clean_agent_reply(raw_reply)
+                        log_to_terminal("에이전트 응답", bot_reply)
 
                     except Exception as e:
                         bot_reply = f"오류가 발생했습니다: {e}"
+                        log_to_terminal("에이전트 오류", bot_reply)
 
                     st.markdown(bot_reply)
 

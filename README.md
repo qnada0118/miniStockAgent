@@ -66,6 +66,7 @@ TAVILY_API_KEY=
 FMP_API_KEY=
 AWS_REGION=
 AWS_PROFILE=
+BEDROCK_MODEL_ID=
 ```
 
 ### 환경 변수 설명
@@ -77,6 +78,7 @@ AWS_PROFILE=
 | `FMP_API_KEY` | 주가/기업 프로필/재무 데이터 조회용 FMP API 키 | 필수 |
 | `AWS_REGION` | Bedrock과 Knowledge Base가 있는 AWS 리전 | 필수 |
 | `AWS_PROFILE` | 로컬 AWS 자격 증명 프로필 이름 | 선택 |
+| `BEDROCK_MODEL_ID` | Bedrock Converse에서 사용할 모델 또는 inference profile ID. 비워두면 `AWS_REGION`에 따라 Nova Lite profile을 자동 선택 | 선택 |
 
 ## AWS Bedrock Knowledge Base 준비
 

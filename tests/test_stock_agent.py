@@ -85,7 +85,8 @@ class StockAgentTests(unittest.TestCase):
         self.stock_tools = importlib.import_module("genfinance.stock_tools")
 
     def test_create_stock_agent_registers_required_tools(self):
-        agent = self.stock_agent.create_stock_agent()
+        with patch.dict(self.stock_agent.os.environ, {}, clear=True):
+            agent = self.stock_agent.create_stock_agent()
 
         self.assertEqual(agent.kwargs["model"], "us.amazon.nova-lite-v1:0")
         self.assertIn("Knowledge Base", agent.kwargs["system_prompt"])
@@ -94,6 +95,29 @@ class StockAgentTests(unittest.TestCase):
         self.assertIn(self.stock_agent.retrieve, tools)
         self.assertIn(self.stock_agent.tavily_search, tools)
         self.assertIn(self.stock_agent.fmp_get_stock_data, tools)
+
+    def test_create_stock_agent_uses_apac_nova_lite_profile_for_ap_region(self):
+        with patch.dict(
+            self.stock_agent.os.environ,
+            {"AWS_REGION": "ap-northeast-2"},
+            clear=True,
+        ):
+            agent = self.stock_agent.create_stock_agent()
+
+        self.assertEqual(agent.kwargs["model"], "apac.amazon.nova-lite-v1:0")
+
+    def test_create_stock_agent_uses_bedrock_model_id_from_env(self):
+        with patch.dict(
+            self.stock_agent.os.environ,
+            {"BEDROCK_MODEL_ID": "anthropic.claude-3-5-sonnet-20241022-v2:0"},
+            clear=True,
+        ):
+            agent = self.stock_agent.create_stock_agent()
+
+        self.assertEqual(
+            agent.kwargs["model"],
+            "anthropic.claude-3-5-sonnet-20241022-v2:0",
+        )
 
     def test_streamlit_app_imports_with_stubbed_runtime(self):
         install_streamlit_stub()
@@ -106,6 +130,28 @@ class StockAgentTests(unittest.TestCase):
         self.assertIn(self.stock_agent.retrieve, tools)
         self.assertIn(self.stock_agent.tavily_search, tools)
         self.assertIn(self.stock_agent.fmp_get_stock_data, tools)
+
+    def test_streamlit_app_removes_thinking_tags_from_agent_reply(self):
+        install_streamlit_stub()
+        sys.modules.pop("chat_app", None)
+
+        chat_app = importlib.import_module("chat_app")
+
+        raw_reply = "<thinking>hidden chain</thinking>\n최종 답변"
+
+        self.assertEqual(chat_app.clean_agent_reply(raw_reply), "최종 답변")
+
+    def test_streamlit_app_summarizes_reasoning_without_hidden_chain(self):
+        install_streamlit_stub()
+        sys.modules.pop("chat_app", None)
+
+        chat_app = importlib.import_module("chat_app")
+
+        summary = chat_app.summarize_reasoning_path("삼성전자 분석해줘")
+
+        self.assertIn("내부 사고 원문은 표시하지 않고", summary)
+        self.assertIn("Knowledge Base", summary)
+        self.assertIn("삼성전자 분석해줘", summary)
 
     def test_load_app_env_removes_blank_aws_profile(self):
         env = importlib.import_module("genfinance.env")
@@ -124,6 +170,15 @@ class StockAgentTests(unittest.TestCase):
                 env.load_app_env()
 
                 self.assertEqual(env.os.environ["AWS_PROFILE"], "demo")
+
+    def test_load_app_env_mirrors_aws_region_to_default_region(self):
+        env = importlib.import_module("genfinance.env")
+
+        with patch.object(env, "load_dotenv", lambda: None):
+            with patch.dict(env.os.environ, {"AWS_REGION": "us-east-1"}, clear=True):
+                env.load_app_env()
+
+                self.assertEqual(env.os.environ["AWS_DEFAULT_REGION"], "us-east-1")
 
     def test_fmp_returns_clear_error_without_api_key(self):
         with patch.dict(self.stock_agent.os.environ, {}, clear=True):
