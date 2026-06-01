@@ -2,7 +2,7 @@ import io
 import os
 import sys
 
-from genfinance.agent_factory import create_stock_agent, get_agent_tools, retrieve
+from genfinance.agent_factory import build_turn_prompt, create_stock_agent, get_agent_tools, retrieve
 from genfinance.env import load_app_env
 from genfinance.stock_prompt import STOCK_AGENT_PROMPT
 from genfinance.stock_tools import fmp_get_stock_data, get_stock_info, tavily_search
@@ -86,7 +86,7 @@ def run_chat_loop(stock_agent):
 
             try:
                 print("\n분석 중...\n")
-                stock_agent(prompt)
+                stock_agent(build_turn_prompt(prompt))
                 print("\n" + "=" * 60 + "\n")
             except UnicodeDecodeError as e:
                 print(f"\n인코딩 오류가 발생했습니다: {e}")

@@ -37,6 +37,21 @@ def get_agent_tools():
     return [retrieve, tavily_search, fmp_get_stock_data, get_stock_info]
 
 
+def build_turn_prompt(user_input: str) -> str:
+    """Add per-turn tool-order instructions to reduce carryover from prior turns."""
+    return "\n".join(
+        [
+            "이번 사용자 질문을 새로운 투자 분석 요청으로 처리하세요.",
+            "이전 답변에서 Tavily 또는 FMP를 먼저 사용했더라도 그 순서를 반복하지 마세요.",
+            "투자 관련 질문이면 반드시 첫 번째 도구 호출은 `retrieve`여야 합니다.",
+            "`retrieve` 결과를 먼저 확인한 뒤, 필요한 경우에만 Tavily 또는 FMP로 보완하세요.",
+            "",
+            "사용자 질문:",
+            user_input,
+        ]
+    )
+
+
 def create_stock_agent():
     """Create the stock investment advisor Agent with the shared configuration."""
     return Agent(

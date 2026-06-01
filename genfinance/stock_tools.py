@@ -1,4 +1,7 @@
 import os
+import csv
+from pathlib import Path
+from typing import Optional
 
 import requests
 from strands import tool
@@ -21,6 +24,64 @@ FMP_ENDPOINTS = {
     "balance_sheet": "balance-sheet-statement",
     "cash_flow": "cash-flow-statement",
 }
+
+KRX_MARKET_SUFFIX = {
+    "KOSPI": ".KS",
+    "KOSDAQ": ".KQ",
+    "KONEX": ".KN",
+}
+
+
+def _iter_stock_master_files():
+    stock_master_dir = Path(__file__).resolve().parents[1] / "docs" / "s3" / "raw" / "krx" / "stock-master"
+    if not stock_master_dir.exists():
+        return []
+    return sorted(stock_master_dir.glob("*.csv"), reverse=True)
+
+
+def _lookup_krx_symbol(query: str) -> Optional[str]:
+    normalized_query = query.strip().upper()
+    if not normalized_query:
+        return None
+
+    for path in _iter_stock_master_files():
+        with path.open(newline="", encoding="utf-8-sig") as csvfile:
+            for row in csv.DictReader(csvfile):
+                code = row.get("단축코드", "").strip()
+                market = row.get("시장구분", "").strip()
+                suffix = KRX_MARKET_SUFFIX.get(market)
+                if not code or not suffix:
+                    continue
+
+                names = {
+                    row.get("한글 종목명", "").strip().upper(),
+                    row.get("한글 종목약명", "").strip().upper(),
+                    row.get("영문 종목명", "").strip().upper().replace(" ", ""),
+                    code.upper(),
+                }
+                if normalized_query in names:
+                    return f"{code}{suffix}"
+
+    return None
+
+
+def normalize_fmp_symbol(ticker: str) -> str:
+    """Convert common KRX names/codes to FMP-compatible symbols."""
+    normalized_ticker = ticker.strip()
+    if not normalized_ticker:
+        return ticker
+
+    if "." in normalized_ticker:
+        return normalized_ticker.upper()
+
+    krx_symbol = _lookup_krx_symbol(normalized_ticker)
+    if krx_symbol:
+        return krx_symbol
+
+    if normalized_ticker.isdigit() and len(normalized_ticker) == 6:
+        return f"{normalized_ticker}.KS"
+
+    return normalized_ticker.upper()
 
 
 @tool
@@ -88,8 +149,9 @@ def fmp_get_stock_data(ticker: str, data_type: str) -> str:
         supported_types = ", ".join(sorted(FMP_ENDPOINTS))
         return f"오류: 지원하지 않는 data_type '{data_type}'입니다. 지원 타입: {supported_types}"
 
+    symbol = normalize_fmp_symbol(ticker)
     url = f"{FMP_BASE_URL}{path}"
-    params = {"symbol": ticker, "apikey": fmp_key}
+    params = {"symbol": symbol, "apikey": fmp_key}
 
     try:
         response = requests.get(url, params=params, timeout=15)
@@ -98,14 +160,14 @@ def fmp_get_stock_data(ticker: str, data_type: str) -> str:
         data = response.json()
 
         if not data or (isinstance(data, list) and len(data) == 0):
-            return f"FMP API에서 티커 {ticker}에 대한 정보를 찾을 수 없습니다."
+            return f"FMP API에서 티커 {ticker}({symbol})에 대한 정보를 찾을 수 없습니다."
 
         if data_type in ["price", "quote", "profile"] and isinstance(data, list):
             profile_data = data[0]
             return (
                 f"기업 프로필 및 주가 정보 (출처: FMP Stable/profile):\n"
                 f"기업명: {profile_data.get('companyName', 'N/A')}\n"
-                f"티커: {profile_data.get('symbol', ticker)}\n"
+                f"티커: {profile_data.get('symbol', symbol)}\n"
                 f"현재 주가: {profile_data.get('price', 'N/A')}\n"
                 f"산업: {profile_data.get('industry', 'N/A')}\n"
                 f"설명 요약: {profile_data.get('description', 'N/A')[:200]}..."

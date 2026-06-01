@@ -8,6 +8,11 @@ from unittest.mock import Mock, patch
 class FakeAgent:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
+        self.calls = []
+
+    def __call__(self, prompt):
+        self.calls.append(prompt)
+        return types.SimpleNamespace(final_output="테스트 답변")
 
 
 def install_dependency_stubs():
@@ -31,6 +36,21 @@ def install_dependency_stubs():
     tavily = types.ModuleType("tavily")
     tavily.TavilyClient = object
     sys.modules["tavily"] = tavily
+
+    requests = types.ModuleType("requests")
+
+    class RequestException(Exception):
+        pass
+
+    class HTTPError(RequestException):
+        pass
+
+    requests.get = Mock()
+    requests.exceptions = types.SimpleNamespace(
+        HTTPError=HTTPError,
+        RequestException=RequestException,
+    )
+    sys.modules["requests"] = requests
 
 
 def import_stock_agent():
@@ -90,11 +110,24 @@ class StockAgentTests(unittest.TestCase):
 
         self.assertEqual(agent.kwargs["model"], "us.amazon.nova-lite-v1:0")
         self.assertIn("Knowledge Base", agent.kwargs["system_prompt"])
+        self.assertIn("`retrieve` 호출 없이", agent.kwargs["system_prompt"])
+        self.assertIn("시장 전체를 묻는 질문은", agent.kwargs["system_prompt"])
+        self.assertIn("임의의 종목 조회용으로 사용하지 않습니다", agent.kwargs["system_prompt"])
+        self.assertIn("일반론만 나열하지 않습니다", agent.kwargs["system_prompt"])
+        self.assertIn("최종 투자 결정과 그 결과에 대한 책임", agent.kwargs["system_prompt"])
 
         tools = agent.kwargs["tools"]
         self.assertIn(self.stock_agent.retrieve, tools)
         self.assertIn(self.stock_agent.tavily_search, tools)
         self.assertIn(self.stock_agent.fmp_get_stock_data, tools)
+
+    def test_build_turn_prompt_enforces_retrieve_first_per_turn(self):
+        prompt = self.stock_agent.build_turn_prompt("오늘 한국 증시 어때?")
+
+        self.assertIn("새로운 투자 분석 요청", prompt)
+        self.assertIn("첫 번째 도구 호출은 `retrieve`", prompt)
+        self.assertIn("Tavily 또는 FMP를 먼저 사용했더라도", prompt)
+        self.assertIn("오늘 한국 증시 어때?", prompt)
 
     def test_create_stock_agent_uses_apac_nova_lite_profile_for_ap_region(self):
         with patch.dict(
@@ -214,6 +247,47 @@ class StockAgentTests(unittest.TestCase):
                 self.assertEqual(params["apikey"], "test-key")
                 self.assertIn("Apple Inc.", result)
                 self.assertIn("출처: FMP", result)
+
+    def test_fmp_converts_korean_company_name_to_krx_symbol(self):
+        response = FakeResponse([
+            {
+                "companyName": "Samsung Electronics Co., Ltd.",
+                "symbol": "005930.KS",
+                "price": 317000,
+                "industry": "Consumer Electronics",
+                "description": "Memory and device maker",
+            }
+        ])
+        requests_get = Mock(return_value=response)
+
+        with patch.dict(self.stock_agent.os.environ, {"FMP_API_KEY": "test-key"}):
+            with patch.object(self.stock_tools.requests, "get", requests_get):
+                result = self.stock_agent.fmp_get_stock_data("삼성전자", "profile")
+
+        params = requests_get.call_args.kwargs["params"]
+
+        self.assertEqual(params["symbol"], "005930.KS")
+        self.assertIn("005930.KS", result)
+
+    def test_fmp_adds_krx_suffix_to_numeric_code(self):
+        response = FakeResponse([
+            {
+                "companyName": "Samsung Electronics Co., Ltd.",
+                "symbol": "005930.KS",
+                "price": 317000,
+                "industry": "Consumer Electronics",
+                "description": "Memory and device maker",
+            }
+        ])
+        requests_get = Mock(return_value=response)
+
+        with patch.dict(self.stock_agent.os.environ, {"FMP_API_KEY": "test-key"}):
+            with patch.object(self.stock_tools.requests, "get", requests_get):
+                self.stock_agent.fmp_get_stock_data("005930", "price")
+
+        params = requests_get.call_args.kwargs["params"]
+
+        self.assertEqual(params["symbol"], "005930.KS")
 
     def test_fmp_financials_calls_income_statement_endpoint(self):
         response = FakeResponse([

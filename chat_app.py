@@ -5,7 +5,7 @@ import re
 import html
 from datetime import datetime
 
-from stock_agent import create_stock_agent
+from stock_agent import build_turn_prompt, create_stock_agent
 from genfinance.env import load_app_env
 from ui.chat_style import apply_styles
 
@@ -176,7 +176,7 @@ else:
                 with st.spinner("🔍 분석 중..."):
                     try:
                         agent = st.session_state["stock_agent"]
-                        result = agent(pending)  # AgentResult 객체
+                        result = agent(build_turn_prompt(pending))  # AgentResult 객체
 
                         if hasattr(result, "final_output") and isinstance(result.final_output, str):
                             raw_reply = result.final_output
@@ -184,7 +184,6 @@ else:
                             raw_reply = str(result)
 
                         bot_reply = clean_agent_reply(raw_reply)
-                        log_to_terminal("에이전트 응답", bot_reply)
 
                     except Exception as e:
                         bot_reply = f"오류가 발생했습니다: {e}"
