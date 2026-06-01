@@ -107,6 +107,24 @@ class StockAgentTests(unittest.TestCase):
         self.assertIn(self.stock_agent.tavily_search, tools)
         self.assertIn(self.stock_agent.fmp_get_stock_data, tools)
 
+    def test_load_app_env_removes_blank_aws_profile(self):
+        env = importlib.import_module("genfinance.env")
+
+        with patch.object(env, "load_dotenv", lambda: None):
+            with patch.dict(env.os.environ, {"AWS_PROFILE": ""}, clear=True):
+                env.load_app_env()
+
+                self.assertNotIn("AWS_PROFILE", env.os.environ)
+
+    def test_load_app_env_keeps_named_aws_profile(self):
+        env = importlib.import_module("genfinance.env")
+
+        with patch.object(env, "load_dotenv", lambda: None):
+            with patch.dict(env.os.environ, {"AWS_PROFILE": "demo"}, clear=True):
+                env.load_app_env()
+
+                self.assertEqual(env.os.environ["AWS_PROFILE"], "demo")
+
     def test_fmp_returns_clear_error_without_api_key(self):
         with patch.dict(self.stock_agent.os.environ, {}, clear=True):
             result = self.stock_agent.fmp_get_stock_data("AAPL", "price")

@@ -1,16 +1,29 @@
 # chat_app.py
 import streamlit as st
-from dotenv import load_dotenv
 import uuid
 import re
+import html
 
 from stock_agent import create_stock_agent
+from genfinance.env import load_app_env
 from ui.chat_style import apply_styles
 
 
 st.set_page_config(page_title="Chat Demo", page_icon="💬")
-load_dotenv()
+load_app_env()
 apply_styles()
+
+
+def render_user_message(content: str) -> None:
+    escaped = html.escape(content).replace("\n", "<br>")
+    st.markdown(
+        f"""
+        <div class="chat-row user">
+            <div class="bubble bubble-user">{escaped}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # -------------------------------------------
@@ -92,8 +105,7 @@ with chat_container:
         role = msg["role"]
 
         if role == "user":
-            with st.chat_message("user"):
-                st.markdown(msg["content"])
+            render_user_message(msg["content"])
         else:
             with st.chat_message("assistant"):
                 st.markdown(msg["content"])

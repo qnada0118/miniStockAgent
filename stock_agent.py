@@ -2,9 +2,8 @@ import io
 import os
 import sys
 
-from dotenv import load_dotenv
-
 from genfinance.agent_factory import create_stock_agent, get_agent_tools, retrieve
+from genfinance.env import load_app_env
 from genfinance.stock_prompt import STOCK_AGENT_PROMPT
 from genfinance.stock_tools import fmp_get_stock_data, get_stock_info, tavily_search
 
@@ -105,7 +104,7 @@ def run_chat_loop(stock_agent):
 
 def main():
     """Run the stock investment advisor agent as a script."""
-    load_dotenv()
+    load_app_env()
     print_environment_warnings()
     stock_agent = create_stock_agent()
     print_intro()

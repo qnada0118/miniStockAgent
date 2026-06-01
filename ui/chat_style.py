@@ -4,81 +4,157 @@ def apply_styles():
     st.markdown(
         """
         <style>
-        /* 제목 더 뚜렷하게 */
+        :root {
+            --chat-bg: #f6f7fb;
+            --chat-panel: #ffffff;
+            --chat-text: #151923;
+            --chat-muted: #667085;
+            --chat-border: #e6e8ef;
+            --chat-user: #2563eb;
+            --chat-user-dark: #1d4ed8;
+            --chat-assistant: #ffffff;
+        }
+
+        .stApp {
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 30rem),
+                linear-gradient(180deg, #ffffff 0%, var(--chat-bg) 100%);
+        }
+
+        section.main > div {
+            max-width: 920px;
+            padding-top: 2.4rem;
+        }
+
         h1 {
-            color: #111 !important;
+            color: var(--chat-text) !important;
             font-weight: 800 !important;
+            letter-spacing: 0 !important;
+            margin-bottom: 0.3rem !important;
         }
 
-        /* 공통 말풍선 스타일 */
+        label {
+            color: var(--chat-muted) !important;
+            font-weight: 650 !important;
+        }
+
+        div[data-testid="stTextInput"] input {
+            border: 1px solid var(--chat-border) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04) !important;
+        }
+
+        section[data-testid="stSidebar"] {
+            background: #fbfcff;
+            border-right: 1px solid var(--chat-border);
+        }
+
+        section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2,
+        section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 {
+            color: var(--chat-text);
+        }
+
+        section[data-testid="stSidebar"] button {
+            border-radius: 10px !important;
+            border: 1px solid transparent !important;
+            transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+        }
+
+        section[data-testid="stSidebar"] button:hover {
+            border-color: var(--chat-border) !important;
+            background: #ffffff !important;
+            transform: translateY(-1px);
+        }
+
         .bubble {
-            padding: 8px 14px;
-            border-radius: 16px;
-            max-width: 75%;
-            line-height: 1.45;
-            margin: 4px 0;
+            padding: 0.78rem 1rem;
+            border-radius: 18px;
+            max-width: min(74%, 680px);
+            line-height: 1.55;
+            margin: 0.18rem 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
         }
 
-        /* 어시스턴트 말풍선 */
         .bubble-assistant {
-            background: #f2f2f2 !important;
-            color: #111 !important;
+            background: var(--chat-assistant) !important;
+            color: var(--chat-text) !important;
+            border: 1px solid var(--chat-border);
+            border-bottom-left-radius: 6px;
         }
 
-        /* 유저 말풍선 */
         .bubble-user {
-            background: #0b93f6 !important;
+            background: linear-gradient(135deg, var(--chat-user), var(--chat-user-dark)) !important;
             color: #ffffff !important;
+            border-bottom-right-radius: 6px;
         }
 
-        /* 한 줄(이모지 + 말풍선) 컨테이너 */
         .chat-row {
             display: flex;
             align-items: flex-end;
-            margin: 4px 0;
+            margin: 0.55rem 0;
         }
 
-        /* 어시스턴트: 왼쪽 정렬 */
         .chat-row.assistant {
             justify-content: flex-start;
         }
 
-        /* 유저: 이모지+말풍선 통째로 오른쪽 정렬 */
         .chat-row.user {
             justify-content: flex-end;
         }
 
-        /* Streamlit 기본 말풍선 배경 제거 */
         div[data-testid="stChatMessage"] {
             background-color: transparent !important;
             border: none !important;
-            padding: 2px 0 !important;
+            padding: 0.25rem 0 !important;
         }
-        /* Streamlit 기본 채팅 아바타 컬럼 숨기기 */
+
         div[data-testid="stChatMessage"] > div:first-child {
-            display: none !important;
+            align-self: flex-start !important;
+            margin-top: 0.25rem !important;
         }
 
-        /* 내용 컬럼을 전체 너비로 확장 */
+        div[data-testid="stChatMessage"] > div:first-child div {
+            background: #eef2ff !important;
+            color: var(--chat-user-dark) !important;
+        }
+
         div[data-testid="stChatMessage"] > div:nth-child(2) {
-            width: 100% !important;
+            max-width: min(82%, 720px) !important;
+            background: var(--chat-assistant);
+            color: var(--chat-text);
+            border: 1px solid var(--chat-border);
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            padding: 0.78rem 1rem !important;
+            box-shadow: 0 10px 24px rgba(16, 24, 40, 0.07);
         }
 
-        /* Agent 답변의 Markdown 표/링크 가독성 */
+        div[data-testid="stChatMessage"] p:first-child {
+            margin-top: 0;
+        }
+
+        div[data-testid="stChatMessage"] p:last-child {
+            margin-bottom: 0;
+        }
+
         div[data-testid="stChatMessage"] table {
             width: 100%;
             border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         div[data-testid="stChatMessage"] th,
         div[data-testid="stChatMessage"] td {
             padding: 0.45rem 0.6rem;
-            border: 1px solid #ddd;
+            border: 1px solid var(--chat-border);
             vertical-align: top;
         }
 
         div[data-testid="stChatMessage"] th {
-            background: #f7f7f7;
+            background: #f8fafc;
             font-weight: 700;
         }
 
@@ -86,10 +162,30 @@ def apply_styles():
             word-break: break-word;
         }
 
-        /* 입력창 둥글게 유지 */
+        div[data-testid="stChatInput"] {
+            background: rgba(246, 247, 251, 0.86);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(230, 232, 239, 0.72);
+        }
+
         div[data-baseweb="textarea"] > textarea {
             border-radius: 999px !important;
             font-size: 0.95rem !important;
+            border: 1px solid var(--chat-border) !important;
+            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08) !important;
+            padding-left: 1rem !important;
+        }
+
+        @media (max-width: 640px) {
+            section.main > div {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .bubble,
+            div[data-testid="stChatMessage"] > div:nth-child(2) {
+                max-width: 88% !important;
+            }
         }
         </style>
         """,
