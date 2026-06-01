@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+  <defs>
+    <linearGradient id="goldStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff2bf"/>
+      <stop offset="45%" stop-color="#d3ad5f"/>
+      <stop offset="100%" stop-color="#8f6b2e"/>
+    </linearGradient>
+
+    <radialGradient id="blackRadial" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1c2432"/>
+      <stop offset="55%" stop-color="#0b1018"/>
+      <stop offset="100%" stop-color="#04060a"/>
+    </radialGradient>
+
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <!-- Transparent background -->
+
+  <g transform="translate(220,210)" filter="url(#softShadow)">
+    <circle r="112" fill="url(#blackRadial)" stroke="url(#goldStroke)" stroke-width="5"/>
+    <circle r="70" fill="none" stroke="#d7bb74" stroke-width="8"/>
+
+    <circle r="20" fill="#d7bb74"/>
+
+    <path d="M0,-70 L0,-31
+             M0,31 L0,70
+             M-70,0 L-31,0
+             M31,0 L70,0
+             M-50,-50 L-23,-23
+             M50,50 L23,23
+             M50,-50 L23,-23
+             M-50,50 L-23,23"
+          stroke="#d7bb74"
+          stroke-width="6"
+          stroke-linecap="round"/>
+
+    <text y="10"
+          text-anchor="middle"
+          font-family="Georgia, 'Times New Roman', serif"
+          font-size="34"
+          font-weight="700"
+          fill="#090d14">G</text>
+  </g>
+
+  <g transform="translate(390,0)">
+    <text x="0" y="205"
+          font-family="Georgia, 'Times New Roman', serif"
+          font-size="92"
+          letter-spacing="1.5"
+          fill="#f1e7cb">GenFinance</text>
+
+    <text x="6" y="254"
+          font-family="Inter, Arial, sans-serif"
+          font-size="19"
+          letter-spacing="8"
+          fill="#a99a72">AI INVESTMENT AGENT</text>
+
+    <line x1="8" y1="282" x2="555" y2="282"
+          stroke="url(#goldStroke)"
+          stroke-width="2"
+          opacity="0.75"/>
+  </g>
+</svg>

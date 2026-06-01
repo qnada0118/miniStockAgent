@@ -5,27 +5,27 @@ def apply_styles():
         """
         <style>
         :root {
-            --chat-bg: #f3f6fb;
-            --chat-panel: #ffffff;
-            --chat-text: #151923;
-            --chat-muted: #667085;
-            --chat-border: #dfe5ef;
-            --chat-user: #0f766e;
-            --chat-user-dark: #115e59;
-            --chat-assistant: #ffffff;
-            --brand: #0f766e;
-            --brand-dark: #134e4a;
-            --brand-soft: #ccfbf1;
-            --accent: #2563eb;
+            --chat-bg: #05070c;
+            --chat-panel: #0b1018;
+            --chat-text: #f4ecd8;
+            --chat-muted: #a99a72;
+            --chat-border: rgba(215, 187, 116, 0.22);
+            --chat-user: #d7bb74;
+            --chat-user-dark: #8f6b2e;
+            --chat-assistant: rgba(11, 16, 24, 0.92);
+            --brand: #d7bb74;
+            --brand-dark: #fff2bf;
+            --brand-soft: rgba(215, 187, 116, 0.12);
+            --accent: #f1e7cb;
             --chat-font-size: 0.92rem;
             --chat-small-font-size: 0.88rem;
         }
 
         .stApp {
             background:
-                radial-gradient(circle at 8% 0%, rgba(15, 118, 110, 0.16), transparent 30rem),
-                radial-gradient(circle at 94% 4%, rgba(37, 99, 235, 0.10), transparent 26rem),
-                linear-gradient(180deg, #fbfdff 0%, var(--chat-bg) 100%);
+                radial-gradient(circle at 14% 0%, rgba(215, 187, 116, 0.13), transparent 31rem),
+                radial-gradient(circle at 92% 4%, rgba(28, 36, 50, 0.82), transparent 28rem),
+                linear-gradient(180deg, #0b1018 0%, var(--chat-bg) 100%);
         }
 
         section.main > div {
@@ -41,14 +41,19 @@ def apply_styles():
         }
 
         .app-hero {
-            padding: 0.2rem 0 1rem;
+            padding: 0.2rem 0 1.15rem;
+            border-bottom: 1px solid rgba(215, 187, 116, 0.12);
         }
 
-        .app-hero h1 {
-            margin: 0 !important;
-            font-size: 2.55rem !important;
-            line-height: 1.08 !important;
-            color: #111827 !important;
+        .hero-logo {
+            width: min(100%, 31rem);
+            margin-bottom: 0.55rem;
+        }
+
+        .hero-logo img {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
         .app-kicker {
@@ -56,13 +61,13 @@ def apply_styles():
             align-items: center;
             margin: 0 0 0.48rem;
             padding: 0.28rem 0.62rem;
-            border: 1px solid rgba(15, 118, 110, 0.18);
+            border: 1px solid rgba(215, 187, 116, 0.3);
             border-radius: 999px;
-            background: rgba(204, 251, 241, 0.55);
+            background: rgba(215, 187, 116, 0.1);
             color: var(--brand-dark);
             font-size: 0.76rem;
             font-weight: 760;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
         }
 
         .app-subtitle {
@@ -78,9 +83,10 @@ def apply_styles():
         }
 
         div[data-testid="stTextInput"] input {
-            border: none !important;
+            border: 1px solid rgba(215, 187, 116, 0.18) !important;
             border-radius: 12px !important;
-            background: #ffffff !important;
+            background: rgba(11, 16, 24, 0.88) !important;
+            color: var(--chat-text) !important;
             box-shadow: none !important;
             outline: none !important;
         }
@@ -94,7 +100,7 @@ def apply_styles():
         div[data-testid="stTextInput"] [data-baseweb="input"] {
             border: none !important;
             box-shadow: none !important;
-            background: #ffffff !important;
+            background: transparent !important;
         }
 
         div[data-testid="stTextInput"] [data-baseweb="input"]:focus-within {
@@ -105,8 +111,8 @@ def apply_styles():
 
         section[data-testid="stSidebar"] {
             background:
-                radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 18rem),
-                linear-gradient(180deg, #f8fbff 0%, #eef4f8 100%);
+                radial-gradient(circle at top left, rgba(215, 187, 116, 0.16), transparent 18rem),
+                linear-gradient(180deg, #0b1018 0%, #04060a 100%);
             border-right: 1px solid var(--chat-border);
         }
 
@@ -121,44 +127,35 @@ def apply_styles():
         }
 
         .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.72rem;
-            padding: 0.85rem 0.78rem 1rem;
+            display: grid;
+            gap: 0.35rem;
+            padding: 0.6rem 0.25rem 1rem;
             margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(15, 118, 110, 0.14);
+            border-bottom: 1px solid rgba(215, 187, 116, 0.2);
         }
 
         .sidebar-logo {
-            display: grid;
-            place-items: center;
-            width: 2.35rem;
-            height: 2.35rem;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--brand), var(--accent));
-            color: #ffffff;
-            font-size: 0.78rem;
-            font-weight: 850;
-            box-shadow: 0 12px 24px rgba(15, 118, 110, 0.22);
+            width: 100%;
         }
 
-        .sidebar-title {
-            color: #111827;
-            font-size: 1rem;
-            font-weight: 820;
-            line-height: 1.15;
+        .sidebar-logo img {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
         .sidebar-caption {
-            margin-top: 0.14rem;
+            margin-left: 0.45rem;
             color: var(--chat-muted);
             font-size: 0.76rem;
             font-weight: 620;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
         .sidebar-section-title {
             margin: 1rem 0.25rem 0.45rem;
-            color: #475467;
+            color: #a99a72;
             font-size: 0.72rem;
             font-weight: 780;
             letter-spacing: 0.06em;
@@ -169,10 +166,10 @@ def apply_styles():
             min-height: 2.55rem !important;
             justify-content: flex-start !important;
             border-radius: 12px !important;
-            border: 1px solid rgba(223, 229, 239, 0.75) !important;
-            background: rgba(255, 255, 255, 0.58) !important;
-            color: #253041 !important;
-            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04) !important;
+            border: 1px solid rgba(215, 187, 116, 0.18) !important;
+            background: rgba(12, 17, 25, 0.76) !important;
+            color: #f1e7cb !important;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26) !important;
             transition: background 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
         }
 
@@ -185,9 +182,9 @@ def apply_styles():
         }
 
         section[data-testid="stSidebar"] button:hover {
-            border-color: rgba(15, 118, 110, 0.22) !important;
-            background: #ffffff !important;
-            box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08) !important;
+            border-color: rgba(215, 187, 116, 0.42) !important;
+            background: rgba(28, 36, 50, 0.9) !important;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36) !important;
             transform: translateY(-1px);
         }
 
@@ -204,7 +201,7 @@ def apply_styles():
             margin: 0.18rem 0;
             word-break: break-word;
             overflow-wrap: anywhere;
-            box-shadow: 0 12px 28px rgba(16, 24, 40, 0.09);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
         }
 
         .bubble-assistant {
@@ -216,9 +213,10 @@ def apply_styles():
 
         .bubble-user {
             background: linear-gradient(135deg, var(--chat-user), var(--chat-user-dark)) !important;
-            color: #ffffff !important;
+            color: #090d14 !important;
             border-bottom-right-radius: 6px;
-            box-shadow: 0 12px 26px rgba(37, 99, 235, 0.22);
+            box-shadow: 0 12px 26px rgba(215, 187, 116, 0.18);
+            font-weight: 650;
         }
 
         .chat-row {
@@ -255,8 +253,8 @@ def apply_styles():
         }
 
         div[data-testid="stChatMessage"] > div:first-child div {
-            background: #eef2ff !important;
-            color: var(--chat-user-dark) !important;
+            background: rgba(215, 187, 116, 0.14) !important;
+            color: var(--brand-dark) !important;
         }
 
         div[data-testid="stChatMessage"] > div:nth-child(2) {
@@ -270,7 +268,7 @@ def apply_styles():
             padding: 1.08rem 1.22rem 1.5rem !important;
             font-size: var(--chat-font-size);
             line-height: 1.62;
-            box-shadow: 0 14px 34px rgba(16, 24, 40, 0.08);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
         }
 
         div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] {
@@ -342,37 +340,60 @@ def apply_styles():
         }
 
         div[data-testid="stChatMessage"] th {
-            background: #f8fafc;
+            background: rgba(215, 187, 116, 0.12);
             font-weight: 700;
         }
 
         div[data-testid="stChatMessage"] a {
             word-break: break-word;
+            color: #fff2bf;
         }
 
         div[data-testid="stChatMessage"] code {
             font-size: 0.86em;
             border-radius: 6px;
             padding: 0.12rem 0.3rem;
+            background: rgba(241, 231, 203, 0.1);
+            color: #fff2bf;
         }
 
         div[data-testid="stChatMessage"] pre {
             border-radius: 12px;
             border: 1px solid var(--chat-border);
+            background: rgba(4, 6, 10, 0.88);
         }
 
         div[data-testid="stChatInput"] {
-            background: rgba(246, 247, 251, 0.86);
+            background: rgba(5, 7, 12, 0.88);
             backdrop-filter: blur(8px);
-            border-top: 1px solid rgba(230, 232, 239, 0.72);
+            border-top: 1px solid rgba(215, 187, 116, 0.16);
         }
 
         div[data-baseweb="textarea"] > textarea {
             border-radius: 999px !important;
             font-size: 0.95rem !important;
             border: 1px solid var(--chat-border) !important;
-            box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08) !important;
+            background: rgba(11, 16, 24, 0.96) !important;
+            color: var(--chat-text) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
             padding-left: 1rem !important;
+        }
+
+        div[data-baseweb="textarea"] > textarea::placeholder {
+            color: rgba(241, 231, 203, 0.56) !important;
+        }
+
+        .stMarkdown,
+        .stTextInput,
+        [data-testid="stMarkdownContainer"] {
+            color: var(--chat-text);
+        }
+
+        .logo-fallback {
+            color: var(--brand-dark);
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 2rem;
+            font-weight: 700;
         }
 
         @media (max-width: 640px) {

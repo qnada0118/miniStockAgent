@@ -3,7 +3,9 @@ import streamlit as st
 import uuid
 import re
 import html
+import base64
 from datetime import datetime
+from pathlib import Path
 
 from stock_agent import build_turn_prompt, create_stock_agent
 from genfinance.env import load_app_env
@@ -12,11 +14,20 @@ from ui.chat_style import apply_styles
 
 DEFAULT_CHAT_TITLE = "새 대화"
 UNTITLED_CHAT_TITLE = "제목 없는 대화"
+LOGO_SVG_PATH = Path(__file__).parent / "ui" / "assets" / "genfinance_logo.svg"
 
 
 st.set_page_config(page_title="GenFinance", page_icon="💬")
 load_app_env()
 apply_styles()
+
+
+def load_logo_img() -> str:
+    try:
+        logo_data = base64.b64encode(LOGO_SVG_PATH.read_bytes()).decode("ascii")
+        return f'<img src="data:image/svg+xml;base64,{logo_data}" alt="GenFinance logo" />'
+    except OSError:
+        return '<div class="logo-fallback">GenFinance</div>'
 
 
 def log_to_terminal(label: str, content: str) -> None:
@@ -119,11 +130,12 @@ def initialize_session_state() -> None:
 
 
 def render_app_header() -> None:
+    logo_img = load_logo_img()
     st.markdown(
-        """
+        f"""
         <div class="app-hero">
+            <div class="hero-logo">{logo_img}</div>
             <p class="app-kicker">AI Stock Research Assistant</p>
-            <h1>GenFinance</h1>
             <p class="app-subtitle">시장 데이터, 뉴스, 리서치 근거를 함께 보는 주식 투자 어드바이저</p>
         </div>
         """,
@@ -132,14 +144,12 @@ def render_app_header() -> None:
 
 
 def render_sidebar(current_id: str, current_chat: dict) -> None:
+    logo_img = load_logo_img()
     st.sidebar.markdown(
-        """
+        f"""
         <div class="sidebar-brand">
-            <div class="sidebar-logo">GF</div>
-            <div>
-                <div class="sidebar-title">GenFinance</div>
-                <div class="sidebar-caption">Investment chats</div>
-            </div>
+            <div class="sidebar-logo">{logo_img}</div>
+            <div class="sidebar-caption">Investment chats</div>
         </div>
         """,
         unsafe_allow_html=True,
