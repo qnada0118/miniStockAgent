@@ -64,6 +64,28 @@ def apply_styles():
             width: 100% !important;
         }
 
+        /* Agent 답변의 Markdown 표/링크 가독성 */
+        div[data-testid="stChatMessage"] table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        div[data-testid="stChatMessage"] th,
+        div[data-testid="stChatMessage"] td {
+            padding: 0.45rem 0.6rem;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        div[data-testid="stChatMessage"] th {
+            background: #f7f7f7;
+            font-weight: 700;
+        }
+
+        div[data-testid="stChatMessage"] a {
+            word-break: break-word;
+        }
+
         /* 입력창 둥글게 유지 */
         div[data-baseweb="textarea"] > textarea {
             border-radius: 999px !important;

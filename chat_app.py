@@ -3,7 +3,6 @@ import streamlit as st
 from dotenv import load_dotenv
 import uuid
 import re
-import html
 
 from strands import Agent
 from strands_tools import retrieve
@@ -97,28 +96,13 @@ if st.sidebar.button("➕ 새 대화 시작", use_container_width=True):
 with chat_container:
     for msg in current_chat["messages"]:
         role = msg["role"]
-        safe_text = html.escape(msg["content"])
 
         if role == "user":
             with st.chat_message("user"):
-                st.markdown(
-                    f"""
-                    <div class="chat-row user">
-                        <div class="bubble bubble-user">{safe_text}</div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+                st.markdown(msg["content"])
         else:
             with st.chat_message("assistant"):
-                st.markdown(
-                    f"""
-                    <div class="chat-row assistant">
-                        <div class="bubble bubble-assistant">{safe_text}</div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+                st.markdown(msg["content"])
 
 
 
@@ -171,16 +155,7 @@ else:
                     except Exception as e:
                         bot_reply = f"오류가 발생했습니다: {e}"
 
-                    safe_text = html.escape(bot_reply)
-                    st.markdown(
-                        f"""
-                        <div class="chat-row assistant">
-                            <div class="chat-avatar">🤖</div>
-                            <div class="bubble bubble-assistant">{safe_text}</div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
+                    st.markdown(bot_reply)
 
         # assistant 메시지 state에 추가
         current_chat["messages"].append(
