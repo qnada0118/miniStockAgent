@@ -5,7 +5,7 @@ import uuid
 import re
 
 from stock_agent import create_stock_agent
-from chat_style import apply_styles 
+from ui.chat_style import apply_styles
 
 
 st.set_page_config(page_title="Chat Demo", page_icon="💬")

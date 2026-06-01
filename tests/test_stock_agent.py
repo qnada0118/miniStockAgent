@@ -82,6 +82,7 @@ class FakeResponse:
 class StockAgentTests(unittest.TestCase):
     def setUp(self):
         self.stock_agent = import_stock_agent()
+        self.stock_tools = importlib.import_module("genfinance.stock_tools")
 
     def test_create_stock_agent_registers_required_tools(self):
         agent = self.stock_agent.create_stock_agent()
@@ -128,7 +129,7 @@ class StockAgentTests(unittest.TestCase):
                 requests_get = Mock(return_value=response)
 
                 with patch.dict(self.stock_agent.os.environ, {"FMP_API_KEY": "test-key"}):
-                    with patch.object(self.stock_agent.requests, "get", requests_get):
+                    with patch.object(self.stock_tools.requests, "get", requests_get):
                         result = self.stock_agent.fmp_get_stock_data("AAPL", data_type)
 
                 requests_get.assert_called_once()
@@ -152,7 +153,7 @@ class StockAgentTests(unittest.TestCase):
         requests_get = Mock(return_value=response)
 
         with patch.dict(self.stock_agent.os.environ, {"FMP_API_KEY": "test-key"}):
-            with patch.object(self.stock_agent.requests, "get", requests_get):
+            with patch.object(self.stock_tools.requests, "get", requests_get):
                 result = self.stock_agent.fmp_get_stock_data("AAPL", "financials")
 
         requests_get.assert_called_once()
@@ -167,7 +168,7 @@ class StockAgentTests(unittest.TestCase):
         requests_get = Mock()
 
         with patch.dict(self.stock_agent.os.environ, {"FMP_API_KEY": "test-key"}):
-            with patch.object(self.stock_agent.requests, "get", requests_get):
+            with patch.object(self.stock_tools.requests, "get", requests_get):
                 result = self.stock_agent.fmp_get_stock_data("AAPL", "dividends")
 
         requests_get.assert_not_called()

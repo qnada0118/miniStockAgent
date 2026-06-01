@@ -14,8 +14,14 @@ AWS Bedrock Knowledge Base, Financial Modeling Prep(FMP), Tavily를 함께 사�
 ```text
 .
 ├── chat_app.py          # Streamlit 채팅 UI
-├── chat_style.py        # Streamlit 스타일
-├── stock_agent.py       # Strands Agent, 도구, 프롬프트
+├── stock_agent.py       # CLI 실행 진입점
+├── genfinance/
+│   ├── agent_factory.py # Strands Agent 생성
+│   ├── stock_prompt.py  # Agent 시스템 프롬프트
+│   └── stock_tools.py   # Tavily/FMP 도구
+├── ui/
+│   └── chat_style.py    # Streamlit 스타일
+├── tests/               # 단위 테스트
 ├── node-sample/         # Elastic Beanstalk Node 샘플 분리 보관
 └── README.md
 ```
