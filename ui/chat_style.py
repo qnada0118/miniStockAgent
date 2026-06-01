@@ -13,6 +13,8 @@ def apply_styles():
             --chat-user: #2563eb;
             --chat-user-dark: #1d4ed8;
             --chat-assistant: #ffffff;
+            --chat-font-size: 0.92rem;
+            --chat-small-font-size: 0.88rem;
         }
 
         .stApp {
@@ -67,14 +69,15 @@ def apply_styles():
         }
 
         .bubble {
-            padding: 0.78rem 1rem;
-            border-radius: 18px;
+            padding: 0.72rem 0.95rem;
+            border-radius: 20px;
             max-width: min(74%, 680px);
-            line-height: 1.55;
+            font-size: var(--chat-font-size);
+            line-height: 1.56;
             margin: 0.18rem 0;
             word-break: break-word;
             overflow-wrap: anywhere;
-            box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+            box-shadow: 0 12px 28px rgba(16, 24, 40, 0.09);
         }
 
         .bubble-assistant {
@@ -88,6 +91,7 @@ def apply_styles():
             background: linear-gradient(135deg, var(--chat-user), var(--chat-user-dark)) !important;
             color: #ffffff !important;
             border-bottom-right-radius: 6px;
+            box-shadow: 0 12px 26px rgba(37, 99, 235, 0.22);
         }
 
         .chat-row {
@@ -125,10 +129,41 @@ def apply_styles():
             background: var(--chat-assistant);
             color: var(--chat-text);
             border: 1px solid var(--chat-border);
-            border-radius: 18px;
+            border-radius: 20px;
             border-bottom-left-radius: 6px;
-            padding: 0.78rem 1rem !important;
-            box-shadow: 0 10px 24px rgba(16, 24, 40, 0.07);
+            padding: 1.08rem 1.22rem 1.5rem !important;
+            font-size: var(--chat-font-size);
+            line-height: 1.62;
+            box-shadow: 0 14px 34px rgba(16, 24, 40, 0.08);
+        }
+
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] {
+            font-size: var(--chat-font-size);
+            line-height: 1.62;
+        }
+
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h1,
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h2,
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3 {
+            color: var(--chat-text) !important;
+            letter-spacing: 0 !important;
+            line-height: 1.28 !important;
+            margin: 1.1rem 0 0.55rem !important;
+        }
+
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h1 {
+            font-size: 1.22rem !important;
+            font-weight: 780 !important;
+        }
+
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h2 {
+            font-size: 1.12rem !important;
+            font-weight: 760 !important;
+        }
+
+        div[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] h3 {
+            font-size: 1.02rem !important;
+            font-weight: 740 !important;
         }
 
         div[data-testid="stChatMessage"] p:first-child {
@@ -136,7 +171,23 @@ def apply_styles():
         }
 
         div[data-testid="stChatMessage"] p:last-child {
-            margin-bottom: 0;
+            margin-bottom: 0.35rem;
+        }
+
+        div[data-testid="stChatMessage"] p {
+            margin: 0.35rem 0 0.7rem;
+        }
+
+        div[data-testid="stChatMessage"] ul,
+        div[data-testid="stChatMessage"] ol {
+            margin: 0.35rem 0 0.8rem;
+            padding-left: 1.25rem;
+        }
+
+        div[data-testid="stChatMessage"] li {
+            margin: 0.34rem 0;
+            padding-left: 0.12rem;
+            line-height: 1.58;
         }
 
         div[data-testid="stChatMessage"] table {
@@ -144,6 +195,7 @@ def apply_styles():
             border-collapse: collapse;
             border-radius: 10px;
             overflow: hidden;
+            font-size: var(--chat-small-font-size);
         }
 
         div[data-testid="stChatMessage"] th,
@@ -160,6 +212,17 @@ def apply_styles():
 
         div[data-testid="stChatMessage"] a {
             word-break: break-word;
+        }
+
+        div[data-testid="stChatMessage"] code {
+            font-size: 0.86em;
+            border-radius: 6px;
+            padding: 0.12rem 0.3rem;
+        }
+
+        div[data-testid="stChatMessage"] pre {
+            border-radius: 12px;
+            border: 1px solid var(--chat-border);
         }
 
         div[data-testid="stChatInput"] {
