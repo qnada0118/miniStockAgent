@@ -27,7 +27,7 @@ Python 가상환경을 만들고 필요한 패키지를 설치합니다.
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install streamlit python-dotenv requests tavily-python strands-agents strands-agents-tools
+pip install -r requirements.txt
 ```
 
 Streamlit 앱 실행:
