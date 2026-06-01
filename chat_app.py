@@ -7,7 +7,7 @@ import html
 
 from strands import Agent
 from strands_tools import retrieve
-from stock_agent import STOCK_AGENT_PROMPT, tavily_search, get_stock_info
+from stock_agent import STOCK_AGENT_PROMPT, tavily_search, fmp_get_stock_data, get_stock_info
 from chat_style import apply_styles 
 
 
@@ -50,7 +50,7 @@ if "stock_agent" not in st.session_state:
     st.session_state["stock_agent"] = Agent(
         model="us.amazon.nova-lite-v1:0",
         system_prompt=STOCK_AGENT_PROMPT,
-        tools=[retrieve, tavily_search, get_stock_info],
+        tools=[retrieve, tavily_search, fmp_get_stock_data, get_stock_info],
     )
 
 # -------------------------------------------

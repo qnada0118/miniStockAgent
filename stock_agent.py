@@ -243,7 +243,7 @@ def main():
     stock_agent = Agent(
         model="us.amazon.nova-lite-v1:0",
         system_prompt=STOCK_AGENT_PROMPT,
-        tools=[retrieve, tavily_search, get_stock_info]
+        tools=[retrieve, tavily_search, fmp_get_stock_data, get_stock_info]
     )
     
     '''
