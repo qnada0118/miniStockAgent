@@ -92,11 +92,26 @@ AWS_PROFILE=
 
 ### FMP
 
-FMP는 주가, 기업 프로필, 손익계산서 등 구조화된 금융 데이터를 조회하는 데 사용합니다.
+FMP는 주가, 과거 시세, 시가총액, 기업 프로필, 재무제표, 재무지표 등 구조화된 금융 데이터를 조회하는 데 사용합니다.
 
 1. Financial Modeling Prep에서 API 키를 발급합니다.
 2. `.env`의 `FMP_API_KEY`에 값을 설정합니다.
-3. 현재 `fmp_get_stock_data`는 `price`, `quote`, `profile`, `financials` 데이터 타입을 지원합니다.
+3. 현재 `fmp_get_stock_data`는 아래 데이터 타입을 지원합니다.
+
+| data_type | 용도 |
+| --- | --- |
+| `price` | 현재 주가와 기업 프로필 |
+| `quote` | 현재 주가와 기업 프로필 |
+| `profile` | 기업 프로필 |
+| `historical_price` | 과거 일별 시세 |
+| `market_cap` | 시가총액 |
+| `enterprise_value` | 기업가치 |
+| `ratios` | PER, PBR 등 주요 재무비율(TTM) |
+| `key_metrics` | EPS, 매출주당지표 등 주요 재무지표(TTM) |
+| `financials` | TTM 손익계산서 |
+| `income_statement` | 손익계산서 |
+| `balance_sheet` | 재무상태표 |
+| `cash_flow` | 현금흐름표 |
 
 ### Tavily
 

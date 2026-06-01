@@ -164,6 +164,36 @@ class StockAgentTests(unittest.TestCase):
         self.assertEqual(params["symbol"], "AAPL")
         self.assertIn("revenue", result)
 
+    def test_fmp_additional_data_types_call_expected_endpoints(self):
+        expected_endpoints = {
+            "historical_price": "historical-price-eod/full",
+            "market_cap": "market-capitalization",
+            "enterprise_value": "enterprise-values",
+            "ratios": "ratios-ttm",
+            "key_metrics": "key-metrics-ttm",
+            "income_statement": "income-statement",
+            "balance_sheet": "balance-sheet-statement",
+            "cash_flow": "cash-flow-statement",
+        }
+
+        for data_type, endpoint in expected_endpoints.items():
+            with self.subTest(data_type=data_type):
+                response = FakeResponse([{"symbol": "AAPL", "value": 100}])
+                requests_get = Mock(return_value=response)
+
+                with patch.dict(self.stock_agent.os.environ, {"FMP_API_KEY": "test-key"}):
+                    with patch.object(self.stock_tools.requests, "get", requests_get):
+                        result = self.stock_agent.fmp_get_stock_data("AAPL", data_type)
+
+                requests_get.assert_called_once()
+                url = requests_get.call_args.args[0]
+                params = requests_get.call_args.kwargs["params"]
+
+                self.assertEqual(url, f"https://financialmodelingprep.com/stable/{endpoint}")
+                self.assertEqual(params["symbol"], "AAPL")
+                self.assertEqual(params["apikey"], "test-key")
+                self.assertIn("출처: FMP", result)
+
     def test_fmp_rejects_unsupported_data_type_before_api_call(self):
         requests_get = Mock()
 

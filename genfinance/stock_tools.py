@@ -5,6 +5,24 @@ from strands import tool
 from tavily import TavilyClient
 
 
+FMP_BASE_URL = "https://financialmodelingprep.com/stable/"
+
+FMP_ENDPOINTS = {
+    "price": "profile",
+    "quote": "profile",
+    "profile": "profile",
+    "financials": "income-statement-ttm",
+    "historical_price": "historical-price-eod/full",
+    "market_cap": "market-capitalization",
+    "enterprise_value": "enterprise-values",
+    "ratios": "ratios-ttm",
+    "key_metrics": "key-metrics-ttm",
+    "income_statement": "income-statement",
+    "balance_sheet": "balance-sheet-statement",
+    "cash_flow": "cash-flow-statement",
+}
+
+
 @tool
 def tavily_search(query: str) -> str:
     """Tavily API를 사용하여 웹에서 주식 및 투자 관련 정보를 검색합니다.
@@ -49,25 +67,29 @@ def get_stock_info(company_name: str) -> str:
 def fmp_get_stock_data(ticker: str, data_type: str) -> str:
     """
     Financial Modeling Prep (FMP) API를 사용하여 특정 기업의 주식 데이터를 조회합니다.
-    Legacy Endpoint 문제를 회피하고 범용 API 호출 방식을 적용합니다.
+
+    지원 data_type:
+    - price, quote, profile: 현재 주가와 기업 프로필
+    - historical_price: 과거 일별 시세
+    - market_cap: 시가총액
+    - enterprise_value: 기업가치
+    - ratios: 주요 재무비율(TTM)
+    - key_metrics: 주요 재무지표(TTM)
+    - financials: TTM 손익계산서
+    - income_statement, balance_sheet, cash_flow: 주요 재무제표
     """
     fmp_key = os.environ.get("FMP_API_KEY")
 
     if not fmp_key:
         return "오류: FMP_API_KEY 환경 변수가 설정되지 않았습니다."
 
-    base_url = "https://financialmodelingprep.com/stable/"
-    params = {"symbol": ticker}
+    path = FMP_ENDPOINTS.get(data_type)
+    if not path:
+        supported_types = ", ".join(sorted(FMP_ENDPOINTS))
+        return f"오류: 지원하지 않는 data_type '{data_type}'입니다. 지원 타입: {supported_types}"
 
-    if data_type in ["price", "quote", "profile"]:
-        path = "profile"
-    elif data_type == "financials":
-        path = "income-statement-ttm"
-    else:
-        return f"오류: 지원하지 않는 data_type '{data_type}'입니다."
-
-    url = f"{base_url}{path}"
-    params["apikey"] = fmp_key
+    url = f"{FMP_BASE_URL}{path}"
+    params = {"symbol": ticker, "apikey": fmp_key}
 
     try:
         response = requests.get(url, params=params, timeout=15)
@@ -88,6 +110,21 @@ def fmp_get_stock_data(ticker: str, data_type: str) -> str:
                 f"산업: {profile_data.get('industry', 'N/A')}\n"
                 f"설명 요약: {profile_data.get('description', 'N/A')[:200]}..."
             )
+
+        if data_type == "historical_price":
+            return f"과거 주가 데이터 (출처: FMP Stable/{path}):\n{data}"
+
+        if data_type == "market_cap":
+            return f"시가총액 데이터 (출처: FMP Stable/{path}):\n{data}"
+
+        if data_type == "enterprise_value":
+            return f"기업가치 데이터 (출처: FMP Stable/{path}):\n{data}"
+
+        if data_type in ["ratios", "key_metrics"]:
+            return f"재무지표 데이터 (출처: FMP Stable/{path}):\n{data}"
+
+        if data_type in ["financials", "income_statement", "balance_sheet", "cash_flow"]:
+            return f"재무제표 데이터 (출처: FMP Stable/{path}):\n{data}"
 
         return str(data[0]) if isinstance(data, list) and len(data) > 0 else str(data)
 
