@@ -1,9 +1,9 @@
-# miniStockAgent
 
 <p align="center">
-  <img src="ui/assets/genfinance_logo.svg" alt="miniStockAgent logo" width="180" />
+  <img src="ui/assets/genfinance_logo.svg" alt="miniStockAgent logo" />
 </p>
 
+# miniStockAgent
 miniStockAgent는 AWS Bedrock Knowledge Base, Financial Modeling Prep(FMP), Tavily를 연동한 주식 리서치 보조 Agent 프로젝트입니다. 사용자의 투자 관련 질문에 대해 내부 또는 개인 리서치 자료를 우선 검색하고, 필요한 경우 최신 웹 정보와 정량 금융 데이터를 보완하여 한국어 분석 답변을 생성합니다.
 
 본 프로젝트는 투자 판단을 자동화하는 시스템이 아닙니다. 자료 검색, 정보 요약, 분석 초안 작성을 보조하는 목적이며, 최종 투자 결정과 그 결과에 대한 책임은 사용자에게 있습니다.
